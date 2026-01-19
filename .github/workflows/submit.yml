@@ -21,10 +21,6 @@ jobs:
 
       - name: Submit application
         env:
-          APPLICATION_NAME: ${{ secrets.APPLICATION_NAME }}
-          APPLICATION_EMAIL: ${{ secrets.APPLICATION_EMAIL }}
-          APPLICATION_RESUME_LINK: ${{ secrets.APPLICATION_RESUME_LINK }}
-          APPLICATION_REPOSITORY_LINK: ${{ github.server_url }}/${{ github.repository }}
           APPLICATION_ACTION_RUN_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           SIGNING_SECRET: hello-there-from-b12
         run: python3 submit_application.py

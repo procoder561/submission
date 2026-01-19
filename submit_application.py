@@ -19,7 +19,7 @@ def get_iso_timestamp():
     return datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
 
-def create_payload(name, email, resume_link, repository_link, action_run_link):
+def create_payload(action_run_link):
     """Create the JSON payload with sorted keys and no extra whitespace."""
     payload = {
         "action_run_link": action_run_link,
@@ -43,12 +43,12 @@ def calculate_signature(json_body, secret):
     return f"sha256={signature}"
 
 
-def submit_application(name, email, resume_link, repository_link, action_run_link, signing_secret):
+def submit_application(action_run_link, signing_secret):
     """Submit the application to B12."""
     url = "https://b12.io/apply/submission"
     
     # Create compact JSON payload
-    json_body = create_payload(name, email, resume_link, repository_link, action_run_link)
+    json_body = create_payload(action_run_link)
     
     # Calculate signature
     signature = calculate_signature(json_body, signing_secret)
@@ -84,35 +84,17 @@ def submit_application(name, email, resume_link, repository_link, action_run_lin
 
 def main():
     """Main entry point."""
-    # Get required fields from environment variables
-    name = os.environ.get('APPLICATION_NAME')
-    email = os.environ.get('APPLICATION_EMAIL')
-    resume_link = os.environ.get('APPLICATION_RESUME_LINK')
-    repository_link = os.environ.get('APPLICATION_REPOSITORY_LINK')
+    # Get action_run_link from environment (provided by GitHub Actions)
     action_run_link = os.environ.get('APPLICATION_ACTION_RUN_LINK')
     signing_secret = os.environ.get('SIGNING_SECRET', 'hello-there-from-b12')
     
-    # Validate required fields
-    required_fields = {
-        'name': name,
-        'email': email,
-        'resume_link': resume_link,
-        'repository_link': repository_link,
-        'action_run_link': action_run_link
-    }
-    
-    missing_fields = [key for key, value in required_fields.items() if not value]
-    if missing_fields:
-        print(f"Error: Missing required environment variables: {', '.join(missing_fields)}", file=sys.stderr)
-        print("\nRequired environment variables:", file=sys.stderr)
-        print("  APPLICATION_NAME", file=sys.stderr)
-        print("  APPLICATION_EMAIL", file=sys.stderr)
-        print("  APPLICATION_RESUME_LINK", file=sys.stderr)
-        print("  APPLICATION_REPOSITORY_LINK", file=sys.stderr)
-        print("  APPLICATION_ACTION_RUN_LINK", file=sys.stderr)
+    # Validate required field
+    if not action_run_link:
+        print("Error: Missing required environment variable: APPLICATION_ACTION_RUN_LINK", file=sys.stderr)
+        print("\nThis should be automatically set by GitHub Actions.", file=sys.stderr)
         sys.exit(1)
     
-    return submit_application(name, email, resume_link, repository_link, action_run_link, signing_secret)
+    return submit_application(action_run_link, signing_secret)
 
 
 if __name__ == '__main__':
