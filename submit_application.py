@@ -23,10 +23,10 @@ def create_payload(name, email, resume_link, repository_link, action_run_link):
     """Create the JSON payload with sorted keys and no extra whitespace."""
     payload = {
         "action_run_link": action_run_link,
-        "email": greencode4523@gmail.com,
-        "name": Steven Lee,
-        "repository_link": repository_link,
-        "resume_link": resume_link,
+        "email": "greencode4523@gmail.com",
+        "name": "Steven Lee",
+        "repository_link": "https://github.com/procoder561/submission",
+        "resume_link": "https://github.com/procoder561/submission/blob/main/resume.pdf",
         "timestamp": get_iso_timestamp()
     }
     # Sort keys alphabetically and create compact JSON (no extra whitespace)
