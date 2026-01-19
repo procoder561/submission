@@ -1,0 +1,31 @@
+name: Submit Application
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Submit application
+        env:
+          APPLICATION_NAME: ${{ secrets.APPLICATION_NAME }}
+          APPLICATION_EMAIL: ${{ secrets.APPLICATION_EMAIL }}
+          APPLICATION_RESUME_LINK: ${{ secrets.APPLICATION_RESUME_LINK }}
+          APPLICATION_REPOSITORY_LINK: ${{ github.server_url }}/${{ github.repository }}
+          APPLICATION_ACTION_RUN_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SIGNING_SECRET: hello-there-from-b12
+        run: python3 submit_application.py
+
